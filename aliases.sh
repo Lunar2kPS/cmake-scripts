@@ -1,13 +1,14 @@
 #!/bin/bash
 
 ignoreScripts=(
+    "README.md"
     "aliases"
     "get-platform-default-config"
     "get-platform"
     "get-project-name"
 )
 
-scriptsFolder=$(dirname $0)
+scriptsFolder="$(dirname "${BASH_SOURCE[0]}")"
 printf "Adding aliases for the bash scripts under '$scriptsFolder'\n"
 for filePath in "$scriptsFolder/"*; do
     fileName=$(basename $filePath)
