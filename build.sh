@@ -26,8 +26,14 @@ fi
 
 printf "Building $config...\n\n"
 printf "Running CMake...\n"
-# cmake  ..
-cmake --preset "$config"
+
+hasCMakePresets=0
+if [ -f "CMakePresets.json" ]; then
+    hasCMakePresets=1
+    cmake --preset "$config"
+else
+    cmake  . -B out/build
+fi
 
 exitCode=$?
 if [ $exitCode -ne 0 ]; then
@@ -36,8 +42,13 @@ fi
 printf "\n"
 
 printf "Running CMake build system...\n"
-# cmake --build .
-cmake --build out/build/"$config"
+
+if [ $hasCMakePresets -eq 1 ]; then
+    cmake --build out/build/"$config"
+else
+    cmake --build out/build
+fi
+
 exitCode=$?
 if [ $exitCode -ne 0 ]; then
     exit $exitCode
