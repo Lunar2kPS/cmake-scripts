@@ -13,6 +13,20 @@
 #       ./build.sh windows-x64-release
 #       ./build.sh linux-x64-debug
 
+function runInVSCmd() {
+    local command="$1"
+    cmd.exe /C "\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\" x64 & $command"
+}
+
+function runInVSCmdIfWindows() {
+    local command="$1"
+    if [ "$simpleOSName" = "Windows" ]; then
+        runInVSCmd "$command"
+    else
+        eval " $command"
+    fi
+}
+
 source $(dirname $0)"/get-platform-default-config.sh"
 
 argCount=$#
@@ -30,7 +44,7 @@ printf "Running CMake...\n"
 hasCMakePresets=0
 if [ -f "CMakePresets.json" ]; then
     hasCMakePresets=1
-    cmake --preset "$config"
+    runInVSCmdIfWindows "cmake --preset $config"
 else
     cmake  . -B out/build
 fi
@@ -44,7 +58,7 @@ printf "\n"
 printf "Running CMake build system...\n"
 
 if [ $hasCMakePresets -eq 1 ]; then
-    cmake --build out/build/"$config"
+    runInVSCmdIfWindows "cmake --build out/build/$config"
 else
     cmake --build out/build
 fi
