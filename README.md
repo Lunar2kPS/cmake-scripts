@@ -3,11 +3,12 @@ This Git repo contains scripts to help you easily build and run C++ projects cre
 
 
 ## 🖥️ Developer Workflow
-The [aliases.sh](/aliases.sh) script allows all the scripts in this top-level (except for the scripts defined by the `$ignoreScripts` array) to be used as aliases without their ".sh" file extension.
+The [aliases.sh](/aliases.sh) script allows all the bash scripts in this top-level (except for the scripts defined by the `$ignoreScripts` array) to be used as aliases without their ".sh" file extension.
 
 This allows for super easy usage of building, running, and cleaning a project built with CMake.
-The build process, does however, depend on a CMakePresets.json file.
 
+**The build process, does however, depend on a CMakePresets.json file.**
+A **sample CMakePresets.json file is provided** as [CMakePresets-Sample.json](/CMakePresets-Sample.json), which you may copy into your CMake project's root level for convenience.
 
 ## ♻️ Automating aliases.sh Upon Opening VS Code
 It seems that VS Code tasks are unable to run in your integrated terminal (such as Git Bash), so instead, you can copy the following into your `~/.bashrc` file:
