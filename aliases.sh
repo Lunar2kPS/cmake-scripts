@@ -12,6 +12,10 @@ scriptsFolder="$(dirname "${BASH_SOURCE[0]}")"
 printf "Adding aliases for the bash scripts under '$scriptsFolder'\n"
 for filePath in "$scriptsFolder/"*; do
     fileName=$(basename $filePath)
+    if [[ $fileName != *.sh ]]; then
+        continue
+    fi
+
     aliasName=${fileName/.sh/}
 
     ignore=false
