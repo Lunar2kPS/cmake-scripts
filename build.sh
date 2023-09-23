@@ -31,6 +31,7 @@ source $(dirname $0)"/get-platform-default-config.sh"
 
 argCount=$#
 args=("$@")
+currentDir="$(pwd)"
 
 if [ $argCount -gt 0 ]; then
     config=${args[0]}
@@ -38,12 +39,24 @@ else
     config="$defaultConfig"
 fi
 
+prebuildScript="$currentDir/pre-build.sh"
+postbuildScript="$currentDir/post-build.sh"
+if [ -f "$prebuildScript" ]; then
+    printf "\nPre-build script running...\n   ($prebuildScript)\n"
+    
+    # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
+    sh "$prebuildScript"
+    exitCode=$?
+    if [ $exitCode -ne 0 ]; then
+        printf "Pre-build script exited with error code $exitCode.\n"
+    fi
+fi
+
 printf "Building $config...\n\n"
 printf "Running CMake...\n"
-
-hasCMakePresets=0
+hasCMakePresets=false
 if [ -f "CMakePresets.json" ]; then
-    hasCMakePresets=1
+    hasCMakePresets=true
     runInVSCmdIfWindows "cmake --preset $config"
 else
     cmake  . -B out/build
@@ -53,17 +66,27 @@ exitCode=$?
 if [ $exitCode -ne 0 ]; then
     exit $exitCode
 fi
-printf "\n"
-
-printf "Running CMake build system...\n"
-
-if [ $hasCMakePresets -eq 1 ]; then
+printf "\nRunning CMake build system...\n"
+if [[ $hasCMakePresets == true ]]; then
     runInVSCmdIfWindows "cmake --build out/build/$config"
 else
     cmake --build out/build
 fi
 
 exitCode=$?
+if [ -f "$postbuildScript" ]; then
+    printf "\nPost-build script running...\n    ($postbuildScript)\n"
+
+    # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
+    # COMMAND LINE USAGE:
+    # sh post-build.sh {BUILD_EXIT_CODE} {BUILD_OUTPUT_FOLDER}
+    sh "$postbuildScript" $exitCode "out/build/$config"
+    
+    exitCode=$?
+    if [ $exitCode -ne 0 ]; then
+        printf "Post-build script exited with error code $exitCode.\n"
+    fi
+fi
 if [ $exitCode -ne 0 ]; then
     exit $exitCode
 fi
