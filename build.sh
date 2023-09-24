@@ -74,6 +74,9 @@ else
 fi
 
 exitCode=$?
+if [ $exitCode -ne 0 ]; then
+    exit $exitCode
+fi
 if [ -f "$postbuildScript" ]; then
     printf "\nPost-build script running...\n    ($postbuildScript)\n"
 
@@ -86,9 +89,6 @@ if [ -f "$postbuildScript" ]; then
     if [ $exitCode -ne 0 ]; then
         printf "Post-build script exited with error code $exitCode.\n"
     fi
-fi
-if [ $exitCode -ne 0 ]; then
-    exit $exitCode
 fi
 
 printf "\n\nSUCCESS!\n\n"
