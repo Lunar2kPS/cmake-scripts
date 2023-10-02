@@ -31,7 +31,12 @@ if [[ $lowercaseUName =~ $macOSNamePattern && $lowercaseOSType =~ $macOSNamePatt
 fi
 if [[ $lowercaseUName =~ $linuxNamePattern && $lowercaseOSType =~ $linuxNamePattern ]]; then
     simpleOSName="Linux"
-    "$(dirname $0)/pi-check.sh"
+
+    # NOTE $0 only works when running this script directly.
+    #   When this script is SOURCED from another bash script,
+    #   We must use the BASH_SOURCE variable, which works in both cases.
+    "$(dirname ${BASH_SOURCE[0]})/pi-check.sh"
+
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
         isRaspberryPi=true
