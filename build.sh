@@ -45,7 +45,7 @@ if [ -f "$prebuildScript" ]; then
     printf "\nPre-build script running...\n   ($prebuildScript)\n"
     
     # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
-    sh "$prebuildScript"
+    "$prebuildScript"
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
         printf "Pre-build script exited with error code $exitCode.\n"
@@ -82,8 +82,8 @@ if [ -f "$postbuildScript" ]; then
 
     # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
     # COMMAND LINE USAGE:
-    # sh post-build.sh {BUILD_EXIT_CODE} {BUILD_OUTPUT_FOLDER}
-    sh "$postbuildScript" $exitCode "out/build/$config"
+    # post-build.sh {BUILD_EXIT_CODE} {BUILD_OUTPUT_FOLDER}
+    "$postbuildScript" $exitCode "out/build/$config"
     
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
