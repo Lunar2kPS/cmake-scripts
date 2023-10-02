@@ -31,5 +31,15 @@ if [[ $lowercaseUName =~ $macOSNamePattern && $lowercaseOSType =~ $macOSNamePatt
 fi
 if [[ $lowercaseUName =~ $linuxNamePattern && $lowercaseOSType =~ $linuxNamePattern ]]; then
     simpleOSName="Linux"
+    "$(dirname $0)/pi-check.sh"
+    exitCode=$?
+    if [ $exitCode -ne 0 ]; then
+        isRaspberryPi=true
+    fi
 fi
-printf "Platform: $simpleOSName\n"
+
+if [[ $isRaspberryPi == true ]]; then
+    printf "Platform: $simpleOSName (Raspberry Pi)\n"
+else
+    printf "Platform: $simpleOSName\n"
+fi

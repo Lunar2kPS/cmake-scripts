@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $(dirname $0)"/get-platform.sh"
+source "$(dirname $0)/get-platform.sh"
 case "$simpleOSName" in
     "Windows") defaultConfig="windows-x64-release";;
     "MacOS") defaultConfig="macos-x64-release";;

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source $(dirname $0)"/get-platform-default-config.sh"
-source $(dirname $0)"/get-project-name.sh"
+source "$(dirname $0)/get-platform-default-config.sh"
+source "$(dirname $0)/get-project-name.sh"
 defaultDebugConfig=${defaultConfig/release/debug}
 
 case "$simpleOSName" in

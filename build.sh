@@ -27,7 +27,7 @@ function runInVSCmdIfWindows() {
     fi
 }
 
-source $(dirname $0)"/get-platform-default-config.sh"
+source "$(dirname $0)/get-platform-default-config.sh"
 
 argCount=$#
 args=("$@")
