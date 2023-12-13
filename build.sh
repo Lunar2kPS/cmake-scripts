@@ -49,6 +49,7 @@ if [ -f "$prebuildScript" ]; then
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
         printf "Pre-build script exited with error code $exitCode.\n"
+        exit $exitCode
     fi
 fi
 
