@@ -9,16 +9,16 @@ relativePath="$(realpath --relative-to="$currentRealPath" "$scriptRealPath")"
 # For debugging:
 # printf "currentRealPath = $currentRealPath\nscriptRealPath = $scriptRealPath\nrelativePath = $relativePath\n"
 
+cmakeFolder=""
 cmakeFile=""
 foundCMakeLists=false
 function checkForCMake() {
     local currentPath=$1
-    echo "currentPath = $currentPath"
-
     local possibleCMakeFile="$currentPath/CMakeLists.txt"
     if [ -f "$possibleCMakeFile" ]; then
         foundCMakeLists=true
         cmakeFile="$possibleCMakeFile"
+        cmakeFolder="$(dirname $cmakeFile)"
     fi
 }
 
@@ -36,10 +36,3 @@ for ((i=0; i<$relativePathLength; i++)); do
         checkForCMake "$nextFolder"
     fi
 done
-printf " \n"
-
-if [ "$foundCMakeLists" = true ]; then
-    echo "FOUND at:    $cmakeFile"
-else
-    echo "No CMakeLists.txt found."
-fi
