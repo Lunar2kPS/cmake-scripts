@@ -6,6 +6,7 @@ ignoreScripts=(
     "get-platform-default-config"
     "get-platform"
     "get-project-name"
+    "get-main-cmake"
 )
 
 scriptsFolder="$(dirname "${BASH_SOURCE[0]}")"
