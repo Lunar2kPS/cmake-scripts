@@ -27,10 +27,16 @@ function runInVSCmdIfWindows() {
     fi
 }
 
-source "$(dirname $0)/get-platform-default-config.sh"
-
 argCount=$#
 args=("$@")
+
+thisScriptFolder="$(dirname $0)"
+source "$thisScriptFolder/get-platform-default-config.sh"
+source "$thisScriptFolder/get-main-cmake.sh"
+
+if [ "$foundCMakeLists" = true ]; then
+    cd "$cmakeFolder"
+fi
 currentDir="$(pwd)"
 
 if [ $argCount -gt 0 ]; then

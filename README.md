@@ -21,7 +21,12 @@ Every time a bash or Git Bash terminal opens, it'll run `source ./cmake-scripts/
 ```sh
 # CUSTOM from https://github.com/Lunar2kPS/cmake-scripts:
 # --- --- ---
-function automaticCmakeCommands() {
+supportedFolders=(
+    "cmake-scripts"
+    "PixelEngine/cmake-scripts"
+)
+
+automaticCmakeCommands() {
     # NOTE: We redirect standard output (stream 1) and standard error (stream 2) to be discarded (/dev/null)
     isInGitRepo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
     exitCode=$?
@@ -33,10 +38,13 @@ function automaticCmakeCommands() {
         return 1;
     fi
 
-    local cmakeAliases="./cmake-scripts/aliases.sh"
-    if [ -f "$cmakeAliases" ]; then
-        source "$cmakeAliases"
-    fi
+    for possibleFolder in "${supportedFolders[@]}"; do
+        local cmakeAliases="$possibleFolder/aliases.sh"
+        if [ -f "$cmakeAliases" ]; then
+            source "$cmakeAliases"
+            break
+        fi
+    done
 
     # Even if git rev-parse fails cause we're not in a git repo,
     #   This ensures we always succeed by default at the end
