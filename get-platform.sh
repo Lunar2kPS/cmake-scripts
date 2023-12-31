@@ -1,5 +1,18 @@
 #/bin/bash
 
+# COMMAND LINE USAGE:
+# ./get-platform.sh [--silent]
+
+# WARNING: Because this script is sourced, it could mess up other scripts if we named these just "argCount" and "args"!
+getPlaformArgCount=$#
+getPlatformArgs=("$@")
+
+for ((i=0; i < $getPlaformArgCount; i++)); do
+    if [ "${getPlatformArgs[$i]}" = "--silent" ]; then
+        silentMode=true
+    fi
+done
+
 # These are regexes to compare against $(uname) and $OSTYPE.
 
 # WARNING: The case-insensitive modifier (?i)...(?-i) did NOT work for me
@@ -43,8 +56,10 @@ if [[ $lowercaseUName =~ $linuxNamePattern && $lowercaseOSType =~ $linuxNamePatt
     fi
 fi
 
-if [[ $isRaspberryPi == true ]]; then
-    printf "Platform: $simpleOSName (Raspberry Pi)\n"
-else
-    printf "Platform: $simpleOSName\n"
+if [ "$silentMode" != true ]; then
+    if [[ $isRaspberryPi == true ]]; then
+        printf "Platform: $simpleOSName (Raspberry Pi)\n"
+    else
+        printf "Platform: $simpleOSName\n"
+    fi
 fi

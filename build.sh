@@ -40,7 +40,7 @@ fi
 currentDir="$(pwd)"
 
 if [ $argCount -gt 0 ]; then
-    config=${args[0]}
+    config="${args[0]}"
 else
     config="$defaultConfig"
 fi
