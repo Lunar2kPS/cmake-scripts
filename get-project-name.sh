@@ -7,4 +7,11 @@
 
 # The second awk command (awk '{print $1}') is used to extract
 # the first field from the output of the previous awk command. This will give you the first argument from the project() command.
-projectName=$(grep -m 1 'project(' CMakeLists.txt | awk -F '[()]' '{print $2}' | awk '{print $1}' | xargs)
+
+thisScriptFolder="$(dirname $0)"
+source "$thisScriptFolder/get-main-cmake.sh"
+
+if [ "$foundCMakeLists" != true ]; then
+    cmakeFile="CMakeLists.txt"
+fi
+projectName=$(grep -m 1 'project(' "$cmakeFile" | awk -F '[()]' '{print $2}' | awk '{print $1}' | xargs)
