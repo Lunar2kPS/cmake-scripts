@@ -6,7 +6,6 @@ source "$thisScriptFolder/get-relative-path.sh"
 
 # EX: "PixelEngine/cmake-scripts"
 relativePath="$(getRelativePath "$(pwd)" "$thisScriptFolder")"
-echo "relativePath = $relativePath"
 
 cmakeFolder=""
 cmakeFile=""
