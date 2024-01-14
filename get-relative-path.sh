@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# This calculates the relative path between two folders on MacOS.
+# This calculates the relative path between two folders, and supports Windows, MacOS, and Linux.
+#   MacOS does NOT support the use of the `--relative-to` option with the `realpath` command,
+#   So this function had to get its own implementation for MacOS to support all platforms easily.
 function getRelativePath() {
     # NOTE $0 only works when running this script directly.
     #   When this script is SOURCED from another bash script,

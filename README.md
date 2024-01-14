@@ -26,7 +26,7 @@ supportedFolders=(
     "PixelEngine/cmake-scripts"
 )
 
-automaticCmakeCommands() {
+function automaticCmakeCommands() {
     # NOTE: We redirect standard output (stream 1) and standard error (stream 2) to be discarded (/dev/null)
     isInGitRepo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
     exitCode=$?
