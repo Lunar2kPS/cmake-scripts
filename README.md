@@ -11,7 +11,7 @@ This allows for super easy usage of building, running, and cleaning a project bu
 A **sample CMakePresets.json file is provided** as [CMakePresets-Sample.json](/CMakePresets-Sample.json), which you may copy into your CMake project's root level for convenience.
 
 ## ♻️ Automating aliases.sh Upon Opening VS Code
-It seems that VS Code tasks are unable to run in your integrated terminal (such as Git Bash), so instead, you can copy the following into your `~/.bashrc` file:
+It seems that VS Code tasks are unable to run in your integrated terminal (such as Git Bash), so instead, you can copy the following into your `~/.bashrc` (Windows & Linux) or `~/.bash_profile` (MacOS) file:
 
 Every time a bash or Git Bash terminal opens, it'll run `source ./cmake-scripts/aliases.sh` if the following 2 conditions are true:
 1. The folder the terminal is opened up in is a local Git repo.
