@@ -30,21 +30,27 @@ function runInVSCmdIfWindows() {
 argCount=$#
 args=("$@")
 
-thisScriptFolder="$(dirname $0)"
-source "$thisScriptFolder/get-platform-default-config.sh"
+thisScriptFolder="$(dirname "${BASH_SOURCE[0]}")"
 source "$thisScriptFolder/get-main-cmake.sh"
 
 if [ "$foundCMakeLists" = true ]; then
     cd "$cmakeFolder"
 fi
-currentDir="$(pwd)"
 
 if [ $argCount -gt 0 ]; then
     config="${args[0]}"
 else
-    config="$defaultConfig"
+    config="Debug"
 fi
 
+lowercaseOSName="$(echo "$simpleOSName" | tr '[:upper:]' '[:lower:]')"
+systemBitness="x64"
+lowercaseConfig="$(echo "$config" | tr '[:upper:]' '[:lower:]')"
+
+cmakePresetName="$lowercaseOSName-$systemBitness-$lowercaseConfig"
+printf "cmakePresetName = $cmakePresetName"
+
+currentDir="$(pwd)"
 prebuildScript="$currentDir/pre-build.sh"
 postbuildScript="$currentDir/post-build.sh"
 if [ -f "$prebuildScript" ]; then
@@ -59,14 +65,17 @@ if [ -f "$prebuildScript" ]; then
     fi
 fi
 
-printf "Building $config...\n\n"
+presetName
+
+printf "Building $config (preset: $cmakePresetName)...\n\n"
 printf "Running CMake...\n"
 hasCMakePresets=false
 if [ -f "CMakePresets.json" ]; then
     hasCMakePresets=true
-    runInVSCmdIfWindows "cmake --preset $config"
+    runInVSCmdIfWindows "cmake --preset $cmakePresetName"
 else
-    cmake  . -B out/build
+    cmake  . -B "out/build" \
+        -D CMAKE_BUILD_TYPE="$config"
 fi
 
 exitCode=$?
@@ -75,9 +84,9 @@ if [ $exitCode -ne 0 ]; then
 fi
 printf "\nRunning CMake build system...\n"
 if [[ $hasCMakePresets == true ]]; then
-    runInVSCmdIfWindows "cmake --build out/build/$config"
+    runInVSCmdIfWindows "cmake --build out/build/$cmakePresetName"
 else
-    cmake --build out/build
+    cmake --build "out/build" --config "$config"
 fi
 
 exitCode=$?
@@ -90,7 +99,7 @@ if [ -f "$postbuildScript" ]; then
     # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
     # COMMAND LINE USAGE:
     # post-build.sh {BUILD_EXIT_CODE} {BUILD_OUTPUT_FOLDER}
-    "$postbuildScript" $exitCode "out/build/$config"
+    "$postbuildScript" $exitCode "out/build/$cmakePresetName"
     
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
