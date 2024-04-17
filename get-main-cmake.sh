@@ -1,6 +1,6 @@
 #!/bin/bash
 
-thisScriptFolder="$(dirname "$0")"
+thisScriptFolder="$(dirname "${BASH_SOURCE[0]}")"
 source "$thisScriptFolder/get-platform.sh" --silent
 source "$thisScriptFolder/get-relative-path.sh"
 

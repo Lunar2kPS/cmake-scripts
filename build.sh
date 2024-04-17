@@ -33,10 +33,6 @@ args=("$@")
 thisScriptFolder="$(dirname "${BASH_SOURCE[0]}")"
 source "$thisScriptFolder/get-main-cmake.sh"
 
-if [ "$foundCMakeLists" = true ]; then
-    cd "$cmakeFolder"
-fi
-
 if [ $argCount -gt 0 ]; then
     config="${args[0]}"
 else
@@ -48,7 +44,11 @@ systemBitness="x64"
 lowercaseConfig="$(echo "$config" | tr '[:upper:]' '[:lower:]')"
 
 cmakePresetName="$lowercaseOSName-$systemBitness-$lowercaseConfig"
-printf "cmakePresetName = $cmakePresetName"
+printf "CMake Preset: $cmakePresetName\n"
+
+if [ "$foundCMakeLists" = true ]; then
+    cd "$cmakeFolder"
+fi
 
 currentDir="$(pwd)"
 prebuildScript="$currentDir/pre-build.sh"

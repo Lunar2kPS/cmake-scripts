@@ -6,7 +6,6 @@ ignoreScripts=(
     "README.md"
     "aliases"
     "get-main-cmake"
-    "get-platform-default-config"
     "get-platform"
     "get-project-name"
     "get-relative-path"
