@@ -12,6 +12,7 @@ relativePath="$(getRelativePath "$(pwd)" "$thisScriptFolder")"
 
 cmakeFolder=""
 cmakeFile=""
+cmakeToScriptsFolder=""
 foundCMakeLists=false
 function checkForCMake() {
     local currentPath="$1"
@@ -36,5 +37,10 @@ for ((i=0; i<$relativePathLength; i++)); do
     if [[ "$currentChar" = "/" ]]; then
         nextFolder="${relativePath:0:$i}"
         checkForCMake "$nextFolder"
+
+        if [ $foundCMakeLists = true ]; then
+            cmakeToScriptsFolder="${relativePath:($i + 1):($relativePathLength - 1)}"
+            break
+        fi
     fi
 done

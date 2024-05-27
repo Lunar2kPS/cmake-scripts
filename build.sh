@@ -8,14 +8,43 @@
 
 # COMMAND LINE USAGE:
 # ./build.sh [CONFIG]
+#   CONFIG must be either Debug or Release.
+#   Based on your platform, it will automatically figure out the CMake preset name to use (such as "windows-x64-release" from Release if you're on Windows, for example)
 
 # EXAMPLES:
-#       ./build.sh windows-x64-release
-#       ./build.sh linux-x64-debug
+#       ./cmake-scripts/build.sh Release      -> windows-x64-release
+#       ./cmake-scripts/build.sh Debug        -> linux-x64-debug
 
+# NOTE:
+# cmd.exe or VS' vcvarsall.bat was causing of some random error,
+#   'ommunity' is not recognized as an internal or external command, operable program or batch file.
+#   No idea why, maybe it was cause I didn't have Ninja installed? But either way, I realized we should be using Visual Studio 17 2022 as the CMake generator anyway!
+
+# WARNING: Git Bash for Windows must use double slashes:
+# cmd.exe //C
+# https://stackoverflow.com/questions/21357813/bash-in-git-for-windows-weirdness-when-running-a-command-with-cmd-exe-c-with-a
 function runInVSCmd() {
     local command="$1"
-    cmd.exe /C "\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\" x64 & $command"
+    # NOTE: Removing this because quoting was going horribly wrong!
+    #   It was also seeming that Git Bash was mistaking the & to run part of the command in the background!
+    # cmd.exe //C "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat x64 & $command"
+
+    # The `start` command would let Windows pick the right program to launch the Windows Batch (.bat) script, but the windows would stay open and the "exit" command wouldn't work.
+
+    # So, we can use cmd.exe //C run-in-vs-cmd.bat {ARG1}, which seems to be the easiest solution!
+
+     # NOTE: We need the Windows-style path
+        #   (although, I'ma use forward slashes (/) everywhere still) or else
+        #   CMake won't know where paths like /d/Projects are. It needs to be in the format like D:/Projects, for Windows, instead.
+
+    # NOTE: We do NOT use BASH_SOURCE[0] here because that's this bash script's file path,
+    #   But below in this script, we cd (change directory), so we need to use $cmakeToScriptsFolder, which is the folder path to get from the folder containing our main CMakeLists.txt to the cmake-scripts folder, so realpath can work:
+    local batchFilePath="$cmakeToScriptsFolder/run-in-vs-cmd.bat"
+    batchFilePath="$(realpath "$batchFilePath")"
+    batchFilePath="$(cygpath -w "$batchFilePath")"
+    batchFilePath="${batchFilePath//\\/\/}"
+
+    cmd.exe //C "$batchFilePath" "$command"
 }
 
 function runInVSCmdIfWindows() {
@@ -32,6 +61,7 @@ args=("$@")
 
 thisScriptFolder="$(dirname "${BASH_SOURCE[0]}")"
 source "$thisScriptFolder/get-main-cmake.sh"
+source "$thisScriptFolder/get-relative-path.sh"
 
 if [ $argCount -gt 0 ]; then
     config="${args[0]}"
@@ -64,8 +94,6 @@ if [ -f "$prebuildScript" ]; then
         exit $exitCode
     fi
 fi
-
-presetName
 
 printf "Building $config (preset: $cmakePresetName)...\n\n"
 printf "Running CMake...\n"
