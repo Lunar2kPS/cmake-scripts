@@ -127,7 +127,7 @@ if [ -f "$postbuildScript" ]; then
     # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
     # COMMAND LINE USAGE:
     # post-build.sh {BUILD_EXIT_CODE} {BUILD_OUTPUT_FOLDER}
-    "$postbuildScript" $exitCode "out/build/$cmakePresetName"
+    "$postbuildScript" --exit-code $exitCode --output-path "out/build/$cmakePresetName" --config "$config"
     
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
