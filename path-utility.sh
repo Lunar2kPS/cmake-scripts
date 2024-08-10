@@ -7,7 +7,9 @@ function getRelativePath() {
     # NOTE $0 only works when running this script directly.
     #   When this script is SOURCED from another bash script,
     #   We must use the BASH_SOURCE variable, which works in both cases.
-    source "$(dirname "${BASH_SOURCE[0]}")/get-platform.sh" --silent
+    if [ -z "$simpleOSName" ]; then
+        source "$(dirname "${BASH_SOURCE[0]}")/get-platform.sh" --silent
+    fi
     local relativePath=""
 
     # WARNING: realpath --relative-to is NOT IMPLEMENTED on MacOS!
@@ -34,4 +36,17 @@ function getRelativePath() {
         relativePath="$(realpath --relative-to="$from" "$to")"
     fi
     echo "$relativePath"
+}
+
+function getAbsolutePath() {
+    local absolutePath="$1"
+    absolutePath="$(realpath "$absolutePath")"
+
+    if [ -z "$simpleOSName" ]; then
+        source "$(dirname "${BASH_SOURCE[0]}")/get-platform.sh" --silent
+    fi
+    absolutePath="$(cygpath -w "$absolutePath")"
+    absolutePath="${absolutePath//\\/\/}"
+    echo "$absolutePath"
+
 }

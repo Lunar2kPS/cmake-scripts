@@ -8,10 +8,10 @@ ignoreScripts=(
     "get-main-cmake"
     "get-platform"
     "get-project-name"
-    "get-relative-path"
+    "path-utility"
 )
 
-source "$currentFolder/get-relative-path.sh"
+source "$currentFolder/path-utility.sh"
 printf "Adding aliases for bash scripts under...\n"
 
 function setDefaultValues() {

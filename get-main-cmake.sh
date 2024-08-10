@@ -5,7 +5,7 @@
 
 thisScriptFolder="$(dirname "${BASH_SOURCE[0]}")"
 source "$thisScriptFolder/get-platform.sh" --silent
-source "$thisScriptFolder/get-relative-path.sh"
+source "$thisScriptFolder/path-utility.sh"
 
 # EX: "PixelEngine/cmake-scripts"
 relativePath="$(getRelativePath "$(pwd)" "$thisScriptFolder")"
