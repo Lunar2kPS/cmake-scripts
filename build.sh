@@ -88,7 +88,28 @@ if [ -f "$postbuildScript" ]; then
     # COMMAND LINE USAGE:
     # post-build.sh {BUILD_EXIT_CODE} {BUILD_OUTPUT_FOLDER}
     "$postbuildScript" --exit-code $exitCode --output-path "out/build/$cmakePresetName" --config "$config"
-    
+
+    # EXAMPLE POST-BUILD SCRIPT ARGS HANDLING:
+    # #!/bin/bash
+
+    # argCount=$#
+    # args=("$@")
+
+    # buildExitCode=0
+    # outputPath=""
+    # config=""
+
+    # for ((i = 0; $i < $argCount; i = i + 2)); do
+    #     currentArg="${args[$i]}"
+    #     nextArg="${args[(($i + 1))]}"
+
+    #     case "$currentArg" in
+    #         "--exit-code")      buildExitCode="$nextArg";;
+    #         "--output-path")    outputPath="$nextArg";;
+    #         "--config")         config="$nextArg";;
+    #     esac
+    # done
+
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
         printf "Post-build script exited with error code $exitCode.\n"
