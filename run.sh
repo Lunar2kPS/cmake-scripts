@@ -4,13 +4,25 @@ argCount=$#
 args=("$@")
 
 thisScriptFolder="$(dirname "${BASH_SOURCE[0]}")"
-source "$thisScriptFolder/get-platform.sh"
+source "$thisScriptFolder/get-platform.sh" --silent
 source "$thisScriptFolder/get-project-name.sh"
 
-if [ $argCount -gt 0 ]; then
+# NOTE: These are default arg values:
+config="Debug"
+buildProfile="editor"
+
+if [ $argCount -eq 1 ]; then
     config="${args[0]}"
-else
-    config="Debug"
+elif [ $argCount -ge 2 ]; then
+    for ((i = 0; $i < $argCount; i = i + 2)); do
+        currentArg="${args[$i]}"
+        nextArg="${args[(($i + 1))]}"
+
+        case "$currentArg" in
+            "--profile")        buildProfile="$nextArg";;
+            "--config")         config="$nextArg";;
+        esac
+    done
 fi
 
 lowercaseOSName="$(echo "$simpleOSName" | tr '[:upper:]' '[:lower:]')"
@@ -18,7 +30,10 @@ systemBitness="x64"
 lowercaseConfig="$(echo "$config"| tr '[:upper:]' '[:lower:]')"
 
 cmakePresetName="$lowercaseOSName-$systemBitness-$lowercaseConfig"
-printf "CMake Preset: $cmakePresetName\n"
+outFolderName="$cmakePresetName"
+if [ -n "$buildProfile" ]; then
+    outFolderName="$outFolderName-$buildProfile"
+fi
 
 if [ "$foundCMakeLists" = true ]; then
     buildFolderRoot="$cmakeFolder/out"
@@ -27,7 +42,7 @@ else
 fi
 
 case "$simpleOSName" in
-    "Windows")      "$buildFolderRoot/build/$cmakePresetName/$projectName.exe";;
-    "MacOS")        "$buildFolderRoot/build/$cmakePresetName/$projectName";;
-    "Linux")        "$buildFolderRoot/build/$cmakePresetName/$projectName";;
+    "Windows")      "$buildFolderRoot/build/$outFolderName/$projectName.exe";;
+    "MacOS")        "$buildFolderRoot/build/$outFolderName/$projectName";;
+    "Linux")        "$buildFolderRoot/build/$outFolderName/$projectName";;
 esac
