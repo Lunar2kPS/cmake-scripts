@@ -8,7 +8,11 @@ ignoreScripts=(
     "get-main-cmake"
     "get-platform"
     "get-project-name"
+    "initialize"
+    "json-utility"
     "path-utility"
+    "regex-utility"
+    "run-in-vs-cmd"
 )
 
 source "$currentFolder/path-utility.sh"
