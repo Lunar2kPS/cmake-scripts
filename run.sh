@@ -9,7 +9,8 @@ source "$thisScriptFolder/get-project-name.sh"
 
 # NOTE: These are default arg values:
 config="Debug"
-buildProfile="editor"
+buildProfile=""
+defaultBuildProfile="editor"
 
 if [ $argCount -eq 1 ]; then
     config="${args[0]}"
@@ -30,10 +31,6 @@ systemBitness="x64"
 lowercaseConfig="$(echo "$config"| tr '[:upper:]' '[:lower:]')"
 
 cmakePresetName="$lowercaseOSName-$systemBitness-$lowercaseConfig"
-outFolderName="$cmakePresetName"
-if [ -n "$buildProfile" ]; then
-    outFolderName="$outFolderName-$buildProfile"
-fi
 
 if [ "$foundCMakeLists" = true ]; then
     buildFolderRoot="$cmakeFolder/out"
@@ -42,7 +39,33 @@ else
 fi
 
 case "$simpleOSName" in
-    "Windows")      "$buildFolderRoot/build/$outFolderName/$projectName.exe";;
-    "MacOS")        "$buildFolderRoot/build/$outFolderName/$projectName";;
-    "Linux")        "$buildFolderRoot/build/$outFolderName/$projectName";;
+    "Windows")      fileExtension=".exe";;
+    "MacOS")        fileExtension="";;
+    "Linux")        fileExtension="";;
 esac
+
+possibleFiles=(
+    "$buildFolderRoot/build/$cmakePresetName/$projectName$fileExtension"
+)
+
+if [ -n "$buildProfile" ]; then
+    possibleFiles+=("$buildFolderRoot/build/$cmakePresetName-$buildProfile/$projectName$fileExtension")
+else
+    possibleFiles+=("$buildFolderRoot/build/$cmakePresetName-$defaultBuildProfile/$projectName$fileExtension")
+fi
+
+mainExeFound=false
+for file in "${possibleFiles[@]}"; do
+    if [ -f "$file" ]; then
+        "$file"
+        mainExeFound=true
+        break
+    fi
+done
+
+if [ $mainExeFound != true ]; then
+    printf "Failed to find main executable at any of the following path(s):\n" >&2
+    for file in "${possibleFiles[@]}"; do
+        printf "    $file\n" >&2
+    done
+fi
