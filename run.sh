@@ -44,9 +44,7 @@ case "$simpleOSName" in
     "Linux")        fileExtension="";;
 esac
 
-possibleFiles=(
-    "$buildFolderRoot/build/$cmakePresetName/$projectName$fileExtension"
-)
+possibleFiles=()
 
 if [ -n "$buildProfile" ]; then
     possibleFiles+=("$buildFolderRoot/build/$cmakePresetName-$buildProfile/$projectName$fileExtension")
@@ -54,9 +52,14 @@ else
     possibleFiles+=("$buildFolderRoot/build/$cmakePresetName-$defaultBuildProfile/$projectName$fileExtension")
 fi
 
+# NOTE: This takes secondary precedence.
+# We check FIRST for stuff like "windows-x64-debug-game" instead of the generic "windows-x64-debug" executable.
+possibleFiles+=("$buildFolderRoot/build/$cmakePresetName/$projectName$fileExtension")
+
 mainExeFound=false
 for file in "${possibleFiles[@]}"; do
     if [ -f "$file" ]; then
+        printf "Found main executable at:\n    $file\n"
         "$file"
         mainExeFound=true
         break
