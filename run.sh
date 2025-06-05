@@ -10,7 +10,7 @@ source "$thisScriptFolder/get-project-name.sh"
 # NOTE: These are default arg values:
 config="Debug"
 buildProfile=""
-defaultBuildProfile="editor"
+defaultBuildProfile="game"
 
 if [ $argCount -eq 1 ]; then
     config="${args[0]}"
