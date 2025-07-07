@@ -48,7 +48,6 @@ systemBitness="x64"
 lowercaseConfig="$(echo "$config" | tr '[:upper:]' '[:lower:]')"
 
 cmakePresetName="$lowercaseOSName-$systemBitness-$lowercaseConfig"
-printf "CMake Preset: $cmakePresetName\n"
 if [ "$foundCMakeLists" = true ]; then
     cd "$cmakeFolder"
 fi
@@ -56,28 +55,41 @@ fi
 currentDir="$(pwd)"
 prebuildScript="$currentDir/pre-build.sh"
 postbuildScript="$currentDir/post-build.sh"
+
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+MAGENTA="\e[35m"
+CYAN="\e[36m"
+RESET_COLOR="\e[0m"
+
 if [ -f "$prebuildScript" ]; then
-    printf "\nPre-build script running...\n   ($prebuildScript)\n"
+    printf "\n${BLUE}Pre-build script running...\n   ($prebuildScript)${RESET_COLOR}\n"
     
     # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
     "$prebuildScript"
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
-        printf "Pre-build script exited with error code $exitCode.\n"
+        printf "${RED}Pre-build script exited with error code $exitCode.${RESET_COLOR}\n"
         exit $exitCode
     fi
 fi
 
-printf "Building $config (preset: $cmakePresetName)...\n\n"
-printf "Running CMake...\n"
 hasCMakePresets=false
 if [ -f "CMakePresets.json" ]; then
+    printf "${BLUE}Building $cmakePresetName...${RESET_COLOR}\n"
+    printf "${BLUE}Generating project from CMake...${RESET_COLOR}\n"
+
     # NOTE: This means we HAVE To keep the build directory specified by the CMake preset, despite us wanting to have build profiles for some projects (like "editor", "game", etc.):
     #   I'd prefer to NOT over-complicate the CMakePresets.json file with even more presets (think: Win, Mac, Linux, etc. variants for EACH!)
     #   Instead, additional build scripts must copy THESE builds into their own folders as apart of their post-process build steps.
     hasCMakePresets=true
     runInVSCmdIfWindows "cmake --preset $cmakePresetName"
 else
+    printf "${BLUE}Building $config...${RESET_COLOR}\n"
+    printf "${BLUE}Generating project from CMake...${RESET_COLOR}\n"
+
     cmake  . -B "out/build" \
         -D CMAKE_BUILD_TYPE="$config"
 fi
@@ -86,7 +98,7 @@ exitCode=$?
 if [ $exitCode -ne 0 ]; then
     exit $exitCode
 fi
-printf "\nRunning CMake build system...\n"
+printf "\n${BLUE}Running CMake build system...${RESET_COLOR}\n"
 if [[ $hasCMakePresets == true ]]; then
     runInVSCmdIfWindows "cmake --build out/build/$cmakePresetName"
 else
@@ -98,7 +110,7 @@ if [ $exitCode -ne 0 ]; then
     exit $exitCode
 fi
 if [ -f "$postbuildScript" ]; then
-    printf "\nPost-build script running...\n    ($postbuildScript)\n"
+    printf "\n${BLUE}Post-build script running...\n    ($postbuildScript)${RESET_COLOR}\n"
 
     # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
     "$postbuildScript" --exit-code $exitCode --output-path "out/build/$cmakePresetName" --config "$config" --args "$@"
@@ -126,8 +138,8 @@ if [ -f "$postbuildScript" ]; then
 
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
-        printf "Post-build script exited with error code $exitCode.\n"
+        printf "${RED}Post-build script exited with error code $exitCode.${RESET_COLOR}\n"
     fi
 fi
 
-printf "\n\nSUCCESS!\n\n"
+printf "\n\n${GREEN}SUCCESS!${RESET_COLOR}\n\n"

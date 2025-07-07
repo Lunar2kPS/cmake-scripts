@@ -1,3 +1,5 @@
+@ECHO OFF
+
 set "firstArg=%~1"
 @REM echo The first arg is: %firstArg%
 
