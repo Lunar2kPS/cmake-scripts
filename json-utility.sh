@@ -14,13 +14,30 @@
 function getJSONArray() {
     local jsonText="$1"
     local arrayName="$2"
-    jsonSplit="$(echo "$jsonText" | "$jsonLibraryPath")"
+    local jsonSplit="$(echo "$jsonText" | "$jsonLibraryPath")"
+    local regex="\\[\"$arrayName\",[0-9]+\][[:space:]]*\"(.*)\""
 
     lastJSONArray=()
-    regex="\\[\"$arrayName\",[0-9]+\][[:space:]]*\"(.*)\""
     while IFS= read -r line; do
         if [[ "$line" =~ $regex ]]; then
             lastJSONArray+=("${BASH_REMATCH[1]}")
         fi
     done <<< "$jsonSplit"
+}
+
+function getJSONValue() {
+    local jsonText="$1"
+    local key="$2"
+    local jsonSplit="$(echo "$jsonText" | "$jsonLibraryPath")"
+    local regex="\\[\"$key\"\\][[:space:]]*\"(.*)\""
+
+    while IFS= read -r line; do
+        if [[ "$line" =~ $regex ]]; then
+            lastJSONValue="${BASH_REMATCH[1]}"
+            return 0
+        fi
+    done <<< "$jsonSplit"
+
+    # Not found:
+    return 1
 }

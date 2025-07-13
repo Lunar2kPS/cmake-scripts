@@ -5,7 +5,7 @@ args=("$@")
 
 thisScriptFolder="$(dirname "${BASH_SOURCE[0]}")"
 source "$thisScriptFolder/get-platform.sh" --silent
-source "$thisScriptFolder/get-project-name.sh"
+source "$thisScriptFolder/get-program-info.sh"
 
 # NOTE: These are default arg values:
 config="Debug"
@@ -47,14 +47,14 @@ esac
 possibleFiles=()
 
 if [ -n "$buildProfile" ]; then
-    possibleFiles+=("$buildFolderRoot/build/$cmakePresetName-$buildProfile/$projectName$fileExtension")
+    possibleFiles+=("$buildFolderRoot/build/$cmakePresetName-$buildProfile/$programName$fileExtension")
 else
-    possibleFiles+=("$buildFolderRoot/build/$cmakePresetName-$defaultBuildProfile/$projectName$fileExtension")
+    possibleFiles+=("$buildFolderRoot/build/$cmakePresetName-$defaultBuildProfile/$programName$fileExtension")
 fi
 
 # NOTE: This takes secondary precedence.
 # We check FIRST for stuff like "windows-x64-debug-game" instead of the generic "windows-x64-debug" executable.
-possibleFiles+=("$buildFolderRoot/build/$cmakePresetName/$projectName$fileExtension")
+possibleFiles+=("$buildFolderRoot/build/$cmakePresetName/$programName$fileExtension")
 
 mainExeFound=false
 for file in "${possibleFiles[@]}"; do
