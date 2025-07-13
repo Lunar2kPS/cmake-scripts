@@ -142,4 +142,6 @@ if [ -f "$postbuildScript" ]; then
     fi
 fi
 
+"$thisScriptFolder/autoregenerate-vscode-launch.sh"
+
 printf "\n\n${GREEN}SUCCESS!${RESET_COLOR}\n\n"

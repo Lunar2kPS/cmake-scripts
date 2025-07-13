@@ -5,6 +5,7 @@ proxyAliasFolder=""
 ignoreScripts=(
     "README.md"
     "aliases"
+    "autoregenerate-vscode-launch"
     "direct-get-program-name"
     "get-main-cmake"
     "get-platform"
