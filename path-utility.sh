@@ -48,5 +48,4 @@ function getAbsolutePath() {
     absolutePath="$(cygpath -w "$absolutePath")"
     absolutePath="${absolutePath//\\/\/}"
     echo "$absolutePath"
-
 }
