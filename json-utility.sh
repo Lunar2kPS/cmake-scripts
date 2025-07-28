@@ -15,7 +15,7 @@ function getJSONArray() {
     local jsonText="$1"
     local arrayName="$2"
     local jsonSplit="$(echo "$jsonText" | "$jsonLibraryPath")"
-    local regex="\\[\"$arrayName\",[0-9]+\][[:space:]]*\"(.*)\""
+    local regex="\\[\"$arrayName\",[0-9]+\][[:space:]]*\"(.*)\"" # NOTE: The double quotes here are important to get the WHOLE array!
 
     lastJSONArray=()
     while IFS= read -r line; do
@@ -29,11 +29,15 @@ function getJSONValue() {
     local jsonText="$1"
     local key="$2"
     local jsonSplit="$(echo "$jsonText" | "$jsonLibraryPath")"
-    local regex="\\[\"$key\"\\][[:space:]]*\"(.*)\""
+    local regex="\\[\"$key\"\\][[:space:]]*(.*)" # NOTE: NO DOUBLE QUOTES here, because we may have different types of values (integers, booleans, strings, etc.)
 
     while IFS= read -r line; do
         if [[ "$line" =~ $regex ]]; then
             lastJSONValue="${BASH_REMATCH[1]}"
+
+            # NOTE: If it WAS a string, then we should remove the quotes:
+            lastJSONValue="${lastJSONValue%\"}"  # Remove trailing quote (Bash parameter expansion)
+            lastJSONValue="${lastJSONValue#\"}"  # Remove leading quote (Bash parameter expansion)
             return 0
         fi
     done <<< "$jsonSplit"
