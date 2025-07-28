@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# WARNING: These functions seem to be very slow compared to regular file path operations!
+# When using these functions in a row many times, you may want to use &, $!, and wait commands to parallelize what you can and avoid observable lag.
+
 # This calculates the relative path between two folders, and supports Windows, MacOS, and Linux.
 #   MacOS does NOT support the use of the `--relative-to` option with the `realpath` command,
 #   So this function had to get its own implementation for MacOS to support all platforms easily.
