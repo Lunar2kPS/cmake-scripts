@@ -37,8 +37,8 @@ elif [ $argCount -ge 2 ]; then
         nextArg="${args[(($i + 1))]}"
 
         case "$currentArg" in
-            "--profile")        buildProfile="$nextArg";;
             "--config")         config="$nextArg";;
+            "--profile")        buildProfile="$nextArg";;
         esac
     done
 fi
@@ -46,8 +46,8 @@ fi
 lowercaseOSName="$(echo "$simpleOSName" | tr '[:upper:]' '[:lower:]')"
 systemBitness="x64"
 lowercaseConfig="$(echo "$config" | tr '[:upper:]' '[:lower:]')"
+enginePresetName="$lowercaseOSName-$systemBitness-$lowercaseConfig" # NOTE: To match up with a CMake preset in CMakePresets.json
 
-cmakePresetName="$lowercaseOSName-$systemBitness-$lowercaseConfig"
 if [ "$foundCMakeLists" = true ]; then
     cd "$cmakeFolder"
 fi
@@ -68,7 +68,7 @@ if [ -f "$prebuildScript" ]; then
     printf "\n${BLUE}Pre-build script running...\n   ($prebuildScript)${RESET_COLOR}\n"
     
     # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
-    "$prebuildScript"
+    "$prebuildScript" --output-path "out/build/$enginePresetName" --config "$config" --args "$@"
     exitCode=$?
     if [ $exitCode -ne 0 ]; then
         printf "${RED}Pre-build script exited with error code $exitCode.${RESET_COLOR}\n"
@@ -79,14 +79,14 @@ fi
 
 hasCMakePresets=false
 if [ -f "CMakePresets.json" ]; then
-    printf "${BLUE}Building $cmakePresetName...${RESET_COLOR}\n"
+    printf "${BLUE}Building $enginePresetName...${RESET_COLOR}\n"
     printf "${BLUE}Generating project from CMake...${RESET_COLOR}\n"
 
     # NOTE: This means we HAVE To keep the build directory specified by the CMake preset, despite us wanting to have build profiles for some projects (like "editor", "game", etc.):
     #   I'd prefer to NOT over-complicate the CMakePresets.json file with even more presets (think: Win, Mac, Linux, etc. variants for EACH!)
     #   Instead, additional build scripts must copy THESE builds into their own folders as apart of their post-process build steps.
     hasCMakePresets=true
-    runInVSCmdIfWindows "cmake --preset $cmakePresetName"
+    runInVSCmdIfWindows "cmake --preset $enginePresetName"
 else
     printf "${BLUE}Building $config...${RESET_COLOR}\n"
     printf "${BLUE}Generating project from CMake...${RESET_COLOR}\n"
@@ -101,7 +101,7 @@ if [ $exitCode -ne 0 ]; then
 fi
 printf "\n${BLUE}Running CMake build system...${RESET_COLOR}\n"
 if [[ $hasCMakePresets == true ]]; then
-    runInVSCmdIfWindows "cmake --build out/build/$cmakePresetName"
+    runInVSCmdIfWindows "cmake --build out/build/$enginePresetName"
 else
     cmake --build "out/build" --config "$config"
 fi
@@ -114,7 +114,7 @@ if [ -f "$postbuildScript" ]; then
     printf "\n${BLUE}Post-build script running...\n    ($postbuildScript)${RESET_COLOR}\n"
 
     # NOTE: We do NOT source here, because the pre-build/post-build scripts might have conflicting, unrelated variables set, such as $config.
-    "$postbuildScript" --exit-code $exitCode --output-path "out/build/$cmakePresetName" --config "$config" --args "$@"
+    "$postbuildScript" --exit-code $exitCode --output-path "out/build/$enginePresetName" --config "$config" --args "$@"
 
     # EXAMPLE POST-BUILD SCRIPT ARGS HANDLING:
     # #!/bin/bash

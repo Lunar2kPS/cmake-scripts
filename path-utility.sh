@@ -19,7 +19,7 @@ function getRelativePath() {
     #   Instead, let's roll our own, since it's fairly simple given 2 absolute paths from readlink -f (above)
     # This assumes the currentRealPath must be ABOVE the scriptRealPath.
     #   Aka, no one's gonna put their project under the cmake-scripts repo. Instead, they'll CONTAIN the cmake-scripts repo (directly or recursively).
-    if [ "$simpleOSName" = "MacOS" ]; then
+    if [ "$simpleOSName" == "MacOS" ]; then
         # NOTE: These 2 are folder paths
         local from="$(readlink -f "$1")"
         local to="$(readlink -f "$2")"
