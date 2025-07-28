@@ -74,6 +74,7 @@ if [ -f "$prebuildScript" ]; then
         printf "${RED}Pre-build script exited with error code $exitCode.${RESET_COLOR}\n"
         exit $exitCode
     fi
+    printf "\n"
 fi
 
 hasCMakePresets=false
@@ -125,7 +126,7 @@ if [ -f "$postbuildScript" ]; then
     # outputPath=""
     # config=""
 
-    # for ((i = 0; $i < $argCount; i = i + 2)); do
+    # for ((i = 0; i < argCount; i = i + 2)); do
     #     currentArg="${args[$i]}"
     #     nextArg="${args[(($i + 1))]}"
 
@@ -140,8 +141,9 @@ if [ -f "$postbuildScript" ]; then
     if [ $exitCode -ne 0 ]; then
         printf "${RED}Post-build script exited with error code $exitCode.${RESET_COLOR}\n"
     fi
+    printf "\n"
 fi
 
 "$thisScriptFolder/autoregenerate-vscode-launch.sh"
 
-printf "\n\n${GREEN}SUCCESS!${RESET_COLOR}\n\n"
+printf "\n${GREEN}SUCCESS!${RESET_COLOR}\n\n"
