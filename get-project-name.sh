@@ -10,7 +10,7 @@ if [ "$foundCMakeLists" != true ]; then
     cmakeFile="CMakeLists.txt"
 fi
 
-projectNameRegex='project\(([A-Za-z0-9\._]+) VERSION ([0-9\.]+)'
+projectNameRegex='project\(([A-Za-z0-9\._\-\+]+) VERSION ([0-9\.]+)'
 mainCMakeText="$(cat "$cmakeFile")"
 if ! [[ $mainCMakeText =~ $projectNameRegex ]]; then
     echo "Failed to find main program version from CMake." >&2
