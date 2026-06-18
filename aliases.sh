@@ -77,9 +77,9 @@ while [ -n "$currentFolder" ]; do
             setDefaultValues
             source "$currentFolder/aliases.sh"
             addAliasesForCurrentFolder
-        elif [ -d "$currentFolder/shortcut-scripts" ]; then
+        elif [ -d "$currentFolder/scripts/shortcuts" ]; then
             setDefaultValues
-            proxyAliasFolder="$currentFolder/shortcut-scripts"
+            proxyAliasFolder="$currentFolder/scripts/shortcuts"
             addAliasesForCurrentFolder
         fi
     else
