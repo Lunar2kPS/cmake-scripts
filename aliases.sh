@@ -14,7 +14,6 @@ ignoreScripts=(
     "initialize"
     "json-utility"
     "path-utility"
-    "regex-utility"
     "run-in-vs-cmd"
 )
 
