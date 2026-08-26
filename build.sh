@@ -53,8 +53,8 @@ if [ "$foundCMakeLists" = true ]; then
 fi
 
 currentDir="$(pwd)"
-prebuildScript="$currentDir/scripts/pre-build.sh"
-postbuildScript="$currentDir/scripts/post-build.sh"
+prebuildScript="$(getAbsolutePath "$currentDir/scripts/pre-build.sh")"
+postbuildScript="$(getAbsolutePath "$currentDir/scripts/post-build.sh")"
 
 RED="\e[31m"
 GREEN="\e[32m"

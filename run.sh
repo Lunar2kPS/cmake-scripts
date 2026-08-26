@@ -6,6 +6,7 @@ args=("$@")
 thisScriptFolder="$(dirname "${BASH_SOURCE[0]}")"
 source "$thisScriptFolder/get-platform.sh" --silent
 source "$thisScriptFolder/get-program-info.sh"
+source "$thisScriptFolder/path-utility.sh"
 
 # NOTE: These are default arg values:
 config="Debug"
@@ -56,10 +57,25 @@ fi
 # We check FIRST for stuff like "windows-x64-debug-game" instead of the generic "windows-x64-debug" executable.
 possibleFiles+=("$buildFolderRoot/build/$cmakePresetName/$programName$fileExtension")
 
+for ((i = 0; i < "${#possibleFiles[@]}"; i++)) do
+    possibleFiles[$i]="$(getAbsolutePath "${possibleFiles[$i]}")"
+done
+
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BRIGHT_BLUE="\e[1;34m"
+RESET_COLOR="\e[0m"
+
+# NOTE: This allows any 24-bit RGB color. Example shown is (255, 0, 0):
+# ANY_COLOR="\e[38;2;255;0;0m"
+
 mainExeFound=false
 for file in "${possibleFiles[@]}"; do
     if [ -f "$file" ]; then
-        printf "Found main executable at:\n    $file\n"
+        containingFolder="$(dirname "$file")"
+        fileName="$(basename "$file")"
+        printf "✅ ${GREEN}Running main executable at:\n${YELLOW}$containingFolder/${BRIGHT_BLUE}$fileName${RESET_COLOR}\n\n"
         "$file"
         mainExeFound=true
         break
@@ -67,7 +83,7 @@ for file in "${possibleFiles[@]}"; do
 done
 
 if [ $mainExeFound != true ]; then
-    printf "Failed to find main executable at any of the following path(s):\n" >&2
+    printf "❌ ${RED}Failed to find main executable at any of the following path(s):${RESET_COLOR}\n" >&2
     for file in "${possibleFiles[@]}"; do
         printf "    $file\n" >&2
     done
