@@ -61,11 +61,24 @@ for ((i = 0; i < "${#possibleFiles[@]}"; i++)) do
     possibleFiles[$i]="$(getAbsolutePath "${possibleFiles[$i]}")"
 done
 
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-BRIGHT_BLUE="\e[1;34m"
-RESET_COLOR="\e[0m"
+stdoutConnectedToATerminal=false
+if [ -t 1 ]; then
+    stdoutConnectedToATerminal=true
+fi
+
+if [ $stdoutConnectedToATerminal = true ]; then
+    RED="\e[31m"
+    GREEN="\e[32m"
+    YELLOW="\e[33m"
+    BRIGHT_BLUE="\e[1;34m"
+    RESET_COLOR="\e[0m"
+else
+    RED=""
+    GREEN=""
+    YELLOW=""
+    BRIGHT_BLUE=""
+    RESET_COLOR=""
+fi
 
 # NOTE: This allows any 24-bit RGB color. Example shown is (255, 0, 0):
 # ANY_COLOR="\e[38;2;255;0;0m"

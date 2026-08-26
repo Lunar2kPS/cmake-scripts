@@ -56,13 +56,28 @@ currentDir="$(pwd)"
 prebuildScript="$(getAbsolutePath "$currentDir/scripts/pre-build.sh")"
 postbuildScript="$(getAbsolutePath "$currentDir/scripts/post-build.sh")"
 
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-BLUE="\e[34m"
-MAGENTA="\e[35m"
-CYAN="\e[36m"
-RESET_COLOR="\e[0m"
+stdoutConnectedToATerminal=false
+if [ -t 1 ]; then
+    stdoutConnectedToATerminal=true
+fi
+
+if [ $stdoutConnectedToATerminal = true ]; then
+    RED="\e[31m"
+    GREEN="\e[32m"
+    YELLOW="\e[33m"
+    BLUE="\e[34m"
+    MAGENTA="\e[35m"
+    CYAN="\e[36m"
+    RESET_COLOR="\e[0m"
+else
+    RED=""
+    GREEN=""
+    YELLOW=""
+    BLUE=""
+    MAGENTA=""
+    CYAN=""
+    RESET_COLOR=""
+fi
 
 if [ -f "$prebuildScript" ]; then
     printf "\n${BLUE}Pre-build script running...\n   ($prebuildScript)${RESET_COLOR}\n"
